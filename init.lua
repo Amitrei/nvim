@@ -352,24 +352,37 @@ require('lazy').setup({
           -- In this case, we create a function that lets us more easily define mappings specific
           -- for LSP related items. It sets the mode, buffer and description for us each time.
           local map = function(keys, func, desc)
-            vim.keymap.set('n', keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
+            vim.kermap.set('n', keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
           end
 
-          -- Rename the variable under your cursor.
-          --  Most Language Servers support renaming across files, etc.
-          map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
-
-          -- Execute a code action, usually your cursor needs to be on top of an error
-          -- or a suggestion from your LSP for this to activate.
-          map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
-
-          -- Opens a popup that displays documentation about the word under your cursor
-          --  See `:help K` for why this keymap.
-          map('K', vim.lsp.buf.hover, 'Hover Documentation')
-
-          -- WARN: This is not Goto Definition, this is Goto Declaration.
-          --  For example, in C this would take you to the header.
-          map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+          local opts = { buffer = event.buf }
+          vim.keymap.set('n', 'gd', function()
+            vim.lsp.buf.definition()
+          end, opts)
+          vim.keymap.set('n', '<leader>k', function()
+            vim.lsp.buf.hover()
+          end, opts)
+          vim.keymap.set('n', '<leader>vd', function()
+            vim.diagnostic.open_float()
+          end, opts)
+          vim.keymap.set('n', '<leader>i', function()
+            vim.lsp.buf.code_action()
+          end, opts)
+          vim.keymap.set('n', '<leader>vrr', function()
+            vim.lsp.buf.references()
+          end, opts)
+          vim.keymap.set('n', '<leader>vrn', function()
+            vim.lsp.buf.rename()
+          end, opts)
+          vim.keymap.set('i', '<C-h>', function()
+            vim.lsp.buf.signature_help()
+          end, opts)
+          vim.keymap.set('n', '[d', function()
+            vim.diagnostic.goto_next()
+          end, opts)
+          vim.keymap.set('n', ']d', function()
+            vim.diagnostic.goto_prev()
+          end, opts)
 
           -- The following two autocommands are used to highlight references of the
           -- word under your cursor when your cursor rests there for a little while.
@@ -407,9 +420,22 @@ require('lazy').setup({
       --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
+      --
+      local util = require 'lspconfig.util'
       local servers = {
-        -- clangd = {},
-        -- gopls = {},
+        gopls = {
+          root_dir = function(fname)
+            -- see: https://github.com/neovim/nvim-lspconfig/issues/804
+            local mod_cache = vim.trim(vim.fn.system 'go env GOMODCACHE')
+            if fname:sub(1, #mod_cache) == mod_cache then
+              local clients = vim.lsp.get_active_clients { name = 'gopls' }
+              if #clients > 0 then
+                return clients[#clients].config.root_dir
+              end
+            end
+            return util.root_pattern 'go.work'(fname) or util.root_pattern('go.mod', '.git')(fname)
+          end,
+        },
         -- pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
