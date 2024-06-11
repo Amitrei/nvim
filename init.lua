@@ -374,7 +374,7 @@ require('lazy').setup({
           vim.keymap.set('n', '<leader>vrn', function()
             vim.lsp.buf.rename()
           end, opts)
-          vim.keymap.set('i', '<C-h>', function()
+          vim.keymap.set('i', '<C-p>', function()
             vim.lsp.buf.signature_help()
           end, opts)
           vim.keymap.set('n', '[d', function()
@@ -423,16 +423,16 @@ require('lazy').setup({
       --
       --
       --
+      --
+      vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
+        pattern = { '*.tf', '*.tfvars' },
+        callback = function()
+          vim.lsp.buf.format()
+        end,
+      })
       local util = require 'lspconfig.util'
       local servers = {
-        terraformls = {
-          vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
-            pattern = { '*.tf', '*.tfvars' },
-            callback = function()
-              vim.lsp.buf.format()
-            end,
-          }),
-        },
+        terraformls = {},
         gopls = {
           root_dir = function(fname)
             -- see: https://github.com/neovim/nvim-lspconfig/issues/804
