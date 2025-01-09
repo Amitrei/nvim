@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -237,13 +237,15 @@ require('lazy').setup({
   --  This is equivalent to:
   --    require('Comment').setup({})
 
+  {
+    { 'rebelot/kanagawa.nvim' },
+  },
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
 
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
   --    require('gitsigns').setup({ ... })
-  --
   -- See `:help gitsigns` to understand what the configuration keys do
   { -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -425,13 +427,14 @@ require('lazy').setup({
       --
       --
       vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
-        pattern = { '*.tf', '*.tfvars' },
+        pattern = { '*.tf', '*.tfvars', '*.groovy' },
         callback = function()
           vim.lsp.buf.format()
         end,
       })
       local util = require 'lspconfig.util'
       local servers = {
+        groovyls = {},
         terraformls = {},
         gopls = {
           root_dir = function(fname)
@@ -526,11 +529,12 @@ require('lazy').setup({
         -- languages here or re-enable it for the disabled ones.
         local disable_filetypes = { c = true, cpp = true }
         return {
-          timeout_ms = 500,
+          timeout_ms = 2000,
           lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
         }
       end,
       formatters_by_ft = {
+        -- groovy = { 'npm-groovy-lint' },
         terraform = { 'terraform_fmt' },
         tf = { 'terraform_fmt' },
         ['terraform-vars'] = { 'terraform_fmt' },
@@ -655,13 +659,13 @@ require('lazy').setup({
     -- change the command in the config to whatever the name of that colorscheme is.
     --
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'folke/tokyonight.nvim',
+    'rebelot/kanagawa.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     init = function()
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
+      vim.cmd.colorscheme 'kanagawa-dragon'
 
       -- You can configure highlights by doing something like:
       vim.cmd.hi 'Comment gui=none'

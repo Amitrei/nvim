@@ -30,7 +30,7 @@ return {
       -- }
       --
       -- You can disable the default linters by setting their filetypes to nil:
-      -- lint.linters_by_ft['clojure'] = nil
+      -- lint.linters_by_ft['groovy'] = 'npm-groovy-lint'
       -- lint.linters_by_ft['dockerfile'] = nil
       -- lint.linters_by_ft['inko'] = nil
       -- lint.linters_by_ft['janet'] = nil
