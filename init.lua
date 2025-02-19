@@ -225,6 +225,8 @@ vim.opt.rtp:prepend(lazypath)
 --
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
+
+  'nvim-java/nvim-java',
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
@@ -426,6 +428,9 @@ require('lazy').setup({
       --
       --
       --
+      --
+
+      require('java').setup()
       vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
         pattern = { '*.tf', '*.tfvars', '*.groovy' },
         callback = function()
@@ -434,6 +439,7 @@ require('lazy').setup({
       })
       local util = require 'lspconfig.util'
       local servers = {
+        jdtls = {},
         groovyls = {},
         terraformls = {},
         gopls = {
