@@ -72,7 +72,12 @@ return {
     vim.keymap.set('n', '<leader>gc', builtin.git_branches, { desc = '[G]it [Checkout]' })
     vim.keymap.set('n', '<leader>fr', builtin.lsp_references, { desc = '[F]ind [R]eferences' })
     vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-    vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = '[S]earch [F]iles' })
+    vim.keymap.set('n', '<leader>ff', function()
+      builtin.find_files {
+        no_ignore = true,
+        no_ignore_parent = true, -- optional but useful
+      }
+    end, { desc = '[S]earch [F]iles (including ignored)' })
     vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
     vim.keymap.set('n', '<leader>fw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
     vim.keymap.set('n', '<leader>/', builtin.live_grep, { desc = '[S]earch by [G]rep' })
