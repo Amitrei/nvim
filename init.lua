@@ -842,6 +842,6 @@ local function git_add_commit_push()
     :find()
 end
 
-vim.keymap.set('n', '<leader>gc', git_add_commit_push, {
+vim.keymap.set('n', '<leader>gp', git_add_commit_push, {
   desc = 'Git add, commit, push',
 })
