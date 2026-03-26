@@ -789,3 +789,16 @@ require('lazy').setup({
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+-- Custom scripts
+vim.api.nvim_create_user_command('Gp', function()
+  vim.ui.input({ prompt = 'Commit message: ' }, function(input)
+    if not input or input == '' then
+      print 'Aborted'
+      return
+    end
+
+    local cmd = string.format('git add . && git commit -m %s && git push', vim.fn.shellescape(input))
+
+    vim.cmd('!' .. cmd)
+  end)
+end, {})
