@@ -60,28 +60,43 @@ return {
                 return
               end
 
-              local cmd = 'git add . && git commit -m ' .. vim.fn.shellescape(msg) .. ' && git push'
+              vim.notify('Running git add, commit, and push...', vim.log.levels.INFO)
 
-              vim.fn.jobstart({ 'sh', '-c', cmd }, {
-                stdout_buffered = true,
-                stderr_buffered = true,
-                on_stdout = function(_, data)
-                  if data and #data > 0 then
-                    local output = table.concat(data, '\n')
-                    if output:gsub('%s+', '') ~= '' then
-                      vim.notify(output, vim.log.levels.INFO)
-                    end
+              vim.system({ 'git', 'add', '.' }, { text = true }, function(add_obj)
+                if add_obj.code ~= 0 then
+                  vim.schedule(function()
+                    vim.notify(add_obj.stderr ~= '' and add_obj.stderr or 'git add failed', vim.log.levels.ERROR)
+                  end)
+                  return
+                end
+
+                vim.system({ 'git', 'commit', '-m', msg }, { text = true }, function(commit_obj)
+                  if commit_obj.code ~= 0 then
+                    vim.schedule(function()
+                      vim.notify(commit_obj.stderr ~= '' and commit_obj.stderr or commit_obj.stdout or 'git commit failed', vim.log.levels.ERROR)
+                    end)
+                    return
                   end
-                end,
-                on_stderr = function(_, data)
-                  if data and #data > 0 then
-                    local output = table.concat(data, '\n')
-                    if output:gsub('%s+', '') ~= '' then
-                      vim.notify(output, vim.log.levels.ERROR)
-                    end
-                  end
-                end,
-              })
+
+                  vim.system({ 'git', 'push' }, { text = true }, function(push_obj)
+                    vim.schedule(function()
+                      if push_obj.code ~= 0 then
+                        vim.notify(push_obj.stderr ~= '' and push_obj.stderr or 'git push failed', vim.log.levels.ERROR)
+                      else
+                        local out = table
+                          .concat({
+                            commit_obj.stdout or '',
+                            push_obj.stdout or '',
+                          }, '\n')
+                          :gsub('^%s+', '')
+                          :gsub('%s+$', '')
+
+                        vim.notify(out ~= '' and out or 'Git commit and push completed', vim.log.levels.INFO)
+                      end
+                    end)
+                  end)
+                end)
+              end)
             end)
 
             return true
