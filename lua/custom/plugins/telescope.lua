@@ -40,6 +40,14 @@ return {
     -- 🔥 Git commit + push picker
     local function git_add_commit_push()
       local history = vim.fn.systemlist 'git log --pretty=%s -n 20 2>/dev/null'
+      local bypass_sort = false
+
+      local sorter = require('telescope.sorters').get_generic_fuzzy_sorter()
+      local orig_scoring = sorter.scoring_function
+      sorter.scoring_function = function(self, prompt, line, entry)
+        if bypass_sort then return 0 end
+        return orig_scoring(self, prompt, line, entry)
+      end
 
       pickers
         .new({}, {
@@ -47,14 +55,26 @@ return {
           finder = finders.new_table {
             results = history,
           },
-          sorter = conf.generic_sorter {},
+          sorter = sorter,
           attach_mappings = function(prompt_bufnr, _)
+            local function sync_prompt_from_selection()
+              local selection = action_state.get_selected_entry()
+              if selection then
+                bypass_sort = true
+                action_state.get_current_picker(prompt_bufnr):set_prompt(selection[1])
+                bypass_sort = false
+              end
+            end
+
+            actions.move_selection_next:enhance { post = sync_prompt_from_selection }
+            actions.move_selection_previous:enhance { post = sync_prompt_from_selection }
+
             actions.select_default:replace(function()
               local selection = action_state.get_selected_entry()
               local line = action_state.get_current_line()
               actions.close(prompt_bufnr)
 
-              local msg = (selection and selection[1]) or line
+              local msg = (line ~= '' and line) or (selection and selection[1])
               if not msg or msg == '' then
                 vim.notify('Commit cancelled', vim.log.levels.INFO)
                 return
