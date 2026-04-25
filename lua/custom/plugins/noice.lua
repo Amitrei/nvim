@@ -10,6 +10,10 @@ return {
         view = 'cmdline_popup',
       },
 
+      notify = {
+        enabled = false,
+      },
+
       messages = {
         enabled = false,
       },
@@ -18,14 +22,12 @@ return {
         {
           filter = {
             event = 'msg_show',
-            kind = { 'shell_out', 'shell_err' },
           },
           opts = { skip = true },
         },
-
         {
           filter = {
-            event = 'msg_show',
+            event = 'notify',
           },
           opts = { skip = true },
         },
