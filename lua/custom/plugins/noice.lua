@@ -19,9 +19,16 @@ return {
         {
           filter = {
             event = 'msg_show',
-            kind = 'shell_out',
+            kind = { 'shell_out', 'shell_err' },
           },
-          view = 'popup',
+          opts = { skip = true },
+        },
+
+        {
+          filter = {
+            event = 'msg_show',
+          },
+          opts = { skip = true },
         },
       },
 
