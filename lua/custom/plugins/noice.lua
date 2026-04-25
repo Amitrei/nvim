@@ -12,8 +12,7 @@ return {
       },
 
       messages = {
-        view = 'mini',
-        view_history = 'split',
+        enabled = false,
       },
 
       routes = {
