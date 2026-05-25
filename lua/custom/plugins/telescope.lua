@@ -45,7 +45,9 @@ return {
       local sorter = require('telescope.sorters').get_generic_fuzzy_sorter()
       local orig_scoring = sorter.scoring_function
       sorter.scoring_function = function(self, prompt, line, entry)
-        if bypass_sort then return 0 end
+        if bypass_sort then
+          return 0
+        end
         return orig_scoring(self, prompt, line, entry)
       end
 
@@ -131,6 +133,7 @@ return {
     vim.keymap.set('n', '<leader>gp', git_add_commit_push, { desc = '[G]it commit & [P]ush' })
     vim.keymap.set('n', '<leader>fr', builtin.lsp_references, { desc = '[F]ind [R]eferences' })
     vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
+    vim.keymap.set('n', '<leader>gh', builtin.git_bcommits, { desc = '[G]it file [H]istory' })
 
     vim.keymap.set('n', '<leader>ff', function()
       builtin.find_files {
