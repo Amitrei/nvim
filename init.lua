@@ -164,6 +164,7 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Plugins keymaps
 vim.keymap.set('n', '<leader>gfd', ':Gvdiffsplit main<CR>', { desc = 'Git diff vs main' })
+vim.keymap.set('n', '<leader>gb', ':Git blame', { desc = 'Git blame' })
 vim.keymap.set('n', '<leader>gd', '::DiffviewOpen origin/main...HEAD<CR>', { desc = 'Git diff vs main' })
 
 -- Diagnostic keymaps
