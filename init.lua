@@ -162,6 +162,10 @@ vim.opt.scrolloff = 10
 vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
+-- Plugins keymaps
+vim.keymap.set('n', '<leader>gfd', ':Gvdiffsplit main<CR>', { desc = 'Git diff vs main' })
+vim.keymap.set('n', '<leader>gd', '::DiffviewOpen origin/main...HEAD<CR>', { desc = 'Git diff vs main' })
+
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
@@ -230,6 +234,7 @@ require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
   'tpope/vim-fugitive', -- Detect tabstop and shiftwidth automatically
+  'sindrets/diffview.nvim', -- Detect tabstop and shiftwidth automatically
 
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
